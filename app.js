@@ -10,11 +10,12 @@ const questions = require("./routes/questions");
 
 const app = express();
 app.use(passport.initialize());
-passport.use(new Strategy({ header: "X-API-KEY", param: "app_token", passReqToCallback: true },
+passport.use(new Strategy({ header: "X-API-KEY", passReqToCallback: true },
     function (req, token, done) {
-        console.log(token, done);
-        if( token === "blablabla"){
-            done();
+        if( token === "letmein"){
+            done(null, true);
+        }else {
+            done(null, false);
         }
     }
 ));

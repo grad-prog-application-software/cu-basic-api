@@ -37,7 +37,8 @@ router.get("/:id", function (req, res, next) {
 });
 
 /* CREATE a new question. */
-router.post("/", 
+router.post("/",
+  passport.authenticate("header", { session: false }),
   function (req, res, next) {
     const { tags, title } = req.body;
 
@@ -58,65 +59,71 @@ router.post("/",
   });
 
 /* UPDATE a question by id. */
-router.put("/:id", function (req, res, next) {
-  const id = req.params.id;
-  const { tags, is_answered, title } = req.body;
+router.put("/:id",
+  passport.authenticate("header", { session: false }),
+  function (req, res, next) {
+    const id = req.params.id;
+    const { tags, is_answered, title } = req.body;
 
-  if (!tags || !is_answered || !title) {
-    if (is_answered === false) {
-      return res.status(400).json({ error: "Please pass false as a string - Your fault RTFM" });
+    if (!tags || !is_answered || !title) {
+      if (is_answered === false) {
+        return res.status(400).json({ error: "Please pass false as a string - Your fault RTFM" });
+      }
+      return res.status(400).json({ error: "All fields are required - Your fault" });
     }
-    return res.status(400).json({ error: "All fields are required - Your fault" });
-  }
 
-  const query = db.prepare("UPDATE questions SET tags = ?, is_answered = ?, title = ? WHERE id = ?");
-  const result = query.run(tags, is_answered, title, id);
+    const query = db.prepare("UPDATE questions SET tags = ?, is_answered = ?, title = ? WHERE id = ?");
+    const result = query.run(tags, is_answered, title, id);
 
-  if (result.changes === 0) {
-    return res.status(404);
-  }
+    if (result.changes === 0) {
+      return res.status(404);
+    }
 
-  res.json(getQuestion(id));
-});
+    res.json(getQuestion(id));
+  });
 
 /* PATCH (partial update) a question by id. */
-router.patch("/:id", function (req, res, next) {
-  const id = req.params.id;
-  const fields = req.body;
-  const queryParts = [];
-  const values = [];
+router.patch("/:id",
+  passport.authenticate("header", { session: false }),
+  function (req, res, next) {
+    const id = req.params.id;
+    const fields = req.body;
+    const queryParts = [];
+    const values = [];
 
-  for (const [key, value] of Object.entries(fields)) {
-    queryParts.push(`${key} = ?`);
-    values.push(value);
-  }
+    for (const [key, value] of Object.entries(fields)) {
+      queryParts.push(`${key} = ?`);
+      values.push(value);
+    }
 
-  if (queryParts.length === 0) {
-    return res.status(400).json({ error: "At least one field is required - Your fault" });
-  }
+    if (queryParts.length === 0) {
+      return res.status(400).json({ error: "At least one field is required - Your fault" });
+    }
 
-  values.push(id);
-  const query = db.prepare(`UPDATE questions SET ${queryParts.join(", ")} WHERE id = ?`);
-  const result = query.run(...values);
+    values.push(id);
+    const query = db.prepare(`UPDATE questions SET ${queryParts.join(", ")} WHERE id = ?`);
+    const result = query.run(...values);
 
-  if (result.changes === 0) {
-    return res.status(404).json({ error: "Question not found - Your fault" });
-  }
+    if (result.changes === 0) {
+      return res.status(404).json({ error: "Question not found - Your fault" });
+    }
 
-  res.json(getQuestion(id));
-});
+    res.json(getQuestion(id));
+  });
 
 /* DELETE a question by id. */
-router.delete("/:id", function (req, res, next) {
-  const id = req.params.id;
-  const query = db.prepare("DELETE FROM questions WHERE id = ?");
-  const result = query.run(id);
+router.delete("/:id",
+  passport.authenticate("header", { session: false }),
+  function (req, res, next) {
+    const id = req.params.id;
+    const query = db.prepare("DELETE FROM questions WHERE id = ?");
+    const result = query.run(id);
 
-  if (result.changes === 0) {
-    return res.status(404).json({ error: "Question not found - Your fault" });
-  }
+    if (result.changes === 0) {
+      return res.status(404).json({ error: "Question not found - Your fault" });
+    }
 
-  res.status(204).json();
-});
+    res.status(204).json();
+  });
 
 module.exports = router;
