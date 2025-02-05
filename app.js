@@ -6,7 +6,7 @@ const passport = require("passport");
 const {Strategy} = require("passport-http-header-strategy");
 
 const questions = require("./routes/questions");
-
+const tools = require("./routes/tools");
 
 const app = express();
 app.use(passport.initialize());
@@ -24,5 +24,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser())
 
 app.use("/api/questions", questions);
+app.use("/api/tools", tools);
 
 module.exports = app;
