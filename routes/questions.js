@@ -40,6 +40,7 @@ router.get("/:id", function (req, res, next) {
 router.post("/",
   passport.authenticate("header", { session: false }),
   function (req, res, next) {
+    console.log(req.body);
     const { tags, title } = req.body;
 
     if (!tags || !title) {

@@ -32,32 +32,35 @@ router.get("/events/:id", function (req, res, next) {
 
 
 // Create a new event
-router.post("/events", function (req, res, next) {
-    const insert = db.prepare("INSERT INTO events (event_name, description, date, location, organizer) VALUES (?, ?, ?, ?, ?)");
-    const result = insert.run(req.body.event_name, req.body.description, req.body.date, req.body.location, req.body.organizer);
+router.post("/events", passport.authenticate("header", { session: false }),
+    function (req, res, next) {
+        const insert = db.prepare("INSERT INTO events (event_name, description, date, location, organizer) VALUES (?, ?, ?, ?, ?)");
+        const result = insert.run(req.body.event_name, req.body.description, req.body.date, req.body.location, req.body.organizer);
 
-    if (result.lastInsertRowid) {
+        if (result.lastInsertRowid) {
 
-        res.status(201).json(data.getEvent(result.lastInsertRowid));
-        return;
-    }
-    else { res.status(500).send(); return; }
+            res.status(201).json(data.getEvent(result.lastInsertRowid));
+            return;
+        }
+        else { res.status(500).send(); return; }
 
-});
+    });
 
 // Update an event by ID
-router.put("/events/:id", function (req, res, next) {
-    const update = db.prepare("UPDATE events SET event_name = ?, description = ?, date = ?, location = ?, organizer = ? WHERE event_id = ?");
-    const result = update.run(req.body.event_name, req.body.description, req.body.date, req.body.location, req.body.organizer, req.params.id);
-    return res.status(200).send();
-});
+router.put("/events/:id", passport.authenticate("header", { session: false }),
+    function (req, res, next) {
+        const update = db.prepare("UPDATE events SET event_name = ?, description = ?, date = ?, location = ?, organizer = ? WHERE event_id = ?");
+        const result = update.run(req.body.event_name, req.body.description, req.body.date, req.body.location, req.body.organizer, req.params.id);
+        return res.status(200).send();
+    });
 
 // Delete an event by ID
-router.delete("/events/:id", function (req, res, next) {
-    const deleteEvent = db.prepare("DELETE FROM events WHERE event_id = ?");
-    deleteEvent.run(req.params.id);
-    res.status(204).send();
-});
+router.delete("/events/:id", passport.authenticate("header", { session: false }),
+    function (req, res, next) {
+        const deleteEvent = db.prepare("DELETE FROM events WHERE event_id = ?");
+        deleteEvent.run(req.params.id);
+        res.status(204).send();
+    });
 
 // RSVP endpoints
 
@@ -77,11 +80,12 @@ router.post("/events/:id/rsvp", function (req, res, next) {
 });
 
 // Get RSVPs for an event
-router.get("/events/:id/rsvps", function (req, res, next) {
-    const query = db.prepare("SELECT * FROM rsvps WHERE event_id = ?");
-    const rsvps = query.all(req.params.id);
+router.get("/events/:id/rsvps", passport.authenticate("header", { session: false }),
+    function (req, res, next) {
+        const query = db.prepare("SELECT * FROM rsvps WHERE event_id = ?");
+        const rsvps = query.all(req.params.id);
 
-    res.json(rsvps);
-});
+        res.json(rsvps);
+    });
 
 module.exports = router;
