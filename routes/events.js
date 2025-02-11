@@ -66,12 +66,12 @@ router.delete("/:id", passport.authenticate("header", { session: false }),
 // RSVP endpoints
 
 // RSVP to an event
-router.post("/:id/rsvp", function (req, res, next) {
+router.post("/:id/rsvps", function (req, res, next) {
     const create = db.prepare("INSERT INTO rsvps (event_id, user_name, response) VALUES (?, ?, ?)");
-    const result = create.run(req.params.id, req.body.user_id, req.body.response);
+    const result = create.run(req.params.id, req.body.user_name, req.body.response);
 
     if (result.lastInsertRowid) {
-        const query = "SELECT * FROM rsvps WHERE id = ?";
+        const query = db.prepare("SELECT * FROM rsvps WHERE rsvp_id = ?");
         return res.json(query.get(result.lastInsertRowid));
     }
     else {
