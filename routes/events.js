@@ -63,7 +63,7 @@ router.delete("/:id", passport.authenticate("header", { session: false }),
         res.status(204).send();
     });
 
-// RSVP endpoints
+// RSVP endpoint
 
 // RSVP to an event
 router.post("/:id/rsvps", function (req, res, next) {
