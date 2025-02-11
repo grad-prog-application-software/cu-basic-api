@@ -3,6 +3,7 @@ const router = express.Router();
 
 router.get("/long-wait", function (req, res, next) {
     const wait = getRandomInt(3000, 7000);
+    console.log("Received the long waiting call ! ");
     setTimeout(function() {
         res.json({ message: `You've waited ${wait} msec.`});
     }, wait);
