@@ -3,6 +3,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const passport = require("passport");
+const cors = require("cors");
 const {Strategy} = require("passport-http-header-strategy");
 
 const questions = require("./routes/questions");
@@ -10,6 +11,7 @@ const events = require("./routes/events");
 const tools = require("./routes/tools");
 
 const app = express();
+app.use(cors());
 app.use(passport.initialize());
 passport.use(new Strategy({ header: "X-API-KEY", passReqToCallback: true },
     function (req, token, done) {
