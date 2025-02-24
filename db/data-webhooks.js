@@ -1,5 +1,5 @@
 const { DatabaseSync } = require("node:sqlite");
-const db = new DatabaseSync("./db/events.sqlite");
+const db = new DatabaseSync("./db/webhooks.sqlite");
 
 async function sendUpdate(type, payload) {
     const query = db.prepare("SELECT * FROM webhooks where type = ?");
