@@ -8,7 +8,6 @@ const db = new DatabaseSync("./db/events.sqlite");
 const {sendUpdate} = require("../db/data-webhooks");
 
 const data = require("../db/data-events");
-const { sendUpdate } = require("../db/data-webhooks");
 
 // Get all events
 router.get("/", function (req, res, next) {

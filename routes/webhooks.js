@@ -24,8 +24,8 @@ router.post("/",
             return;
         }
 
-        const query = db.prepare("INSERT INTO webhooks (url) VALUES (?)");
-        const result = query.run(url);
+        const query = db.prepare("INSERT INTO webhooks (type, url) VALUES (?,?)");
+        const result = query.run(type, url);
 
         if (result.lastInsertRowid) {
 
