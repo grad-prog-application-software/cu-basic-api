@@ -19,8 +19,13 @@ router.post("/",
     function (req, res, next) {
         const { url, type } = req.body;
 
-        if (!url) {
-            res.status(400).json({ error: "Please provide the url field - Your fault" });
+        if (!url || !type) {
+            res.status(400).json({ error: "Please provide the url and type field - Your fault" });
+            return;
+        }
+        
+        if (type !== "event" && type !== "question") {
+            res.status(400).json({ error: "the only valid values for type are 'event' or 'question'  - Your fault" });
             return;
         }
 
