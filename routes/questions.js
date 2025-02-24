@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { getQuestion } = require("../db/data");
 const passport = require("passport");
-
+const {sendUpdate} = require("../db/data-webhooks");
 const { DatabaseSync } = require("node:sqlite");
 const db = new DatabaseSync("./db/questions.sqlite");
 
@@ -52,7 +52,9 @@ router.post("/",
     const result = query.run(tags, 0, new Date().toISOString(), title, false.toString());
 
     if (result.lastInsertRowid) {
-      res.status(201).json(getQuestion(result.lastInsertRowid));
+      const question = getQuestion(result.lastInsertRowid);
+      sendUpdate("question", question);
+      res.status(201).json(question);
       return;
     }
     res.status(500).json({ error: "Something wrong happened on our side - My Fault" });

@@ -2,10 +2,13 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 
-const { DatabaseSync } = require("node:sqlite")
+const { DatabaseSync } = require("node:sqlite");
 const db = new DatabaseSync("./db/events.sqlite");
 
+const {sendUpdate} = require("../db/data-webhooks");
+
 const data = require("../db/data-events");
+const { sendUpdate } = require("../db/data-webhooks");
 
 // Get all events
 router.get("/", function (req, res, next) {
@@ -39,8 +42,9 @@ router.post("/", passport.authenticate("header", { session: false }),
         const result = insert.run(req.body.event_name, req.body.description, req.body.date, req.body.location, req.body.organizer);
 
         if (result.lastInsertRowid) {
-
-            res.status(201).json(data.getEvent(result.lastInsertRowid));
+            const event = data.getEvent(result.lastInsertRowid);
+            sendUpdate("event", event);
+            res.status(201).json(event);
             return;
         }
         else { res.status(500).send(); return; }
