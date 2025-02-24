@@ -17,7 +17,7 @@ router.get("/",
 router.post("/",
     passport.authenticate("header", { session: false }),
     function (req, res, next) {
-        const { url } = req.body;
+        const { url, type } = req.body;
 
         if (!url) {
             res.status(400).json({ error: "Please provide the url field - Your fault" });
