@@ -3,7 +3,7 @@ const db = new DatabaseSync("./db/webhooks.sqlite");
 
 async function sendUpdate(type, payload) {
     const query = db.prepare("SELECT * FROM webhooks where type = ?");
-    const webhooks = query.get(type);
+    const webhooks = query.all(type);
 
     for (const webhook of webhooks) {
         try {
