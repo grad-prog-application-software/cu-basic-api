@@ -16,7 +16,7 @@ async function sendUpdate(type, payload) {
             });
 
             if(!response.ok) {
-                throw new Exception(await response.data());
+                throw new Error(`not a success response code: ${error.status}`);
             }
         } catch (e) {
             console.log(e);
