@@ -1,0 +1,75 @@
+<style>
+    .bg-[*] {
+        padding: 10px;
+
+    }
+    .bg-success{
+        background-color: green;
+        color: lightgreen;
+    }
+    .bg-error {
+        background-color: red;
+        color: pink;
+    }
+</style>
+
+<nav aria-label="breadcrumb">
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li>Settings</li>
+  </ul>
+</nav>
+
+{{#if success}}
+<article class="bg-success">{{success}}</article>
+{{/if}}
+
+{{#if error}}
+<article class="bg-error">{{error}}</article>
+{{/if}}
+
+<h2>Webhooks</h2>
+<div>
+    <form method="post">
+        <fieldset role="group">
+            <input type="url" name="url" id="url" placeholder="webhook url">
+            <select name="type" aria-label="Type" required id="type">
+                <option selected value="" disabled>Type</option>
+                <option value="question">Vraag</option>
+                <option value="event">Evenement</option>
+            </select>
+            <button type="submit">Aanmaken</button>
+        </fieldset>
+    </form>
+</div>
+
+{{#if noWebhooks}}
+<span></span>
+{{else}}
+<table>
+    <thead>
+        <tr>
+            <th scope="col">Webhook url</th>
+            <th scope="col">Type</th>
+            <th scope="col">Acties</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {{#each webhooks}}
+        <tr>
+            <th scope="row">{{this.url}}</th>
+            <td>{{this.type}}</td>
+            <td>
+                <form action="/settings/delete" method="post">
+                    <input type="hidden" name="id" value="{{this.id}}">
+                    <input type="submit" value="delete" class="outline contrast">
+                </form>
+            </td>
+        </tr>
+        {{/each}}
+
+    </tbody>
+</table>
+{{/if}}
+

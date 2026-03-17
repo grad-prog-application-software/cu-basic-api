@@ -7,6 +7,7 @@ const cors = require("cors");
 const {Strategy} = require("passport-http-header-strategy");
 
 const home = require("./routes/index.js");
+const settings = require("./routes/settings.js");
 const questions = require("./routes/questions");
 const events = require("./routes/events");
 const tools = require("./routes/tools");
@@ -35,6 +36,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser())
 
 app.use("/", home);
+app.use("/settings", settings);
 app.use("/api/questions", questions);
 app.use("/api/events", events);
 app.use("/api/tools", tools);

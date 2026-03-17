@@ -1,39 +1,54 @@
-{{#if noWebhooks}}
-<p>Maak hieronder een webhook aan</p>
-{{else}}
-<table>
-    <thead>
-        <tr>
-            <th scope="col">Webhook url</th>
-            <th scope="col">Type</th>
-            <th scope="col">Acties</th>
-        </tr>
-    </thead>
-    <tbody>
+<style>
+    .bg-[*] {
+        padding: 10px;
 
-        {{#each webhooks}}
-        <tr>
-            <th scope="row">{{this.url}}</th>
-            <td>
-                <form action="/delete" method="post">
-                    <input type="hidden" name="id" value="{{this.id}}">
-                </form>
-            </td>
-        </tr>
-        {{/each}}
+    }
 
-    </tbody>
-</table>
+    .bg-success {
+        background-color: green;
+        color: lightgreen;
+    }
+
+    .bg-error {
+        background-color: red;
+        color: pink;
+    }
+</style>
+
+
+
+{{#if success}}
+<article class="bg-success">{{success}}</article>
 {{/if}}
 
+{{#if error}}
+<article class="bg-error">{{error}}</article>
+{{/if}}
+
+<h2>Maak een vraag aan</h2>
 <div>
-    <form method="post">
-        <input type="url" name="url" id="url" placeholder="webhook url">
-        <select name="type" aria-label="Type" required id="type">
-            <option selected value="" disabled>Type</option>
-            <option value="question">Vraag</option>
-            <option value="event">Evenement</option>
-        </select>
+    <form method="post" action="/questions">
+        <fieldset role="group">
+            <input type="text" name="title" id="title" placeholder="titel">
+            <input type="text" name="tags" required id="tags" placeholder="graphql, restapi">
+            <button type="submit">Aanmaken</button>
+        </fieldset>
+    </form>
+</div>
+
+<hr>
+
+<h2>Maak een event aan</h2>
+<div>
+    {{!-- event_name, description, date, location, organizer --}}
+    <form method="post" action="/events">
+        <input type="text" name="event_name" id="event_name" placeholder="Naam van het event">
+        <textarea name="description" id="description" placeholder="Beschrijving"></textarea>
+        <input type="date" name="date" id="date" placeholder="01/01/2027">
+        <fieldset role="group">
+            <input type="text" name="location" id="location" placeholder="locatie">
+            <input type="text" name="organizer" id="organizer" placeholder="organisatie">
+        </fieldset>
         <button type="submit">Aanmaken</button>
     </form>
 </div>
